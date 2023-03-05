@@ -35,7 +35,7 @@ namespace WebApi.Controllers
         ///     dataType : "csv"
         ///     POST /Add
         ///     {
-        ///         "data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,2023-02-03 \r\n  Tanmay,Patil,1234567890,111,111,232424,2023-02-03",
+        ///         "data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,14000101 \r\n  Tanmay,Patil,1234567890,111,111,232424,2023-02-03",
         ///         "calculatorName": "CalcurlatorA"
         ///     }
     ///
@@ -94,7 +94,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// دریافت لیست پروفایل
         /// </summary>
-        /// <param name="dto">مقدار</param>
+        /// <param name="dto">فیلتر</param>
         /// <returns></returns>
         [HttpGet("api/v1/[controller]/[action]")]
         public async Task<IActionResult> GetRange([FromQuery]GetRangeDto dto)
