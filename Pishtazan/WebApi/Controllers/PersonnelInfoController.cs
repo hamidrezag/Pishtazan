@@ -17,7 +17,6 @@ namespace WebApi.Controllers
     /// مدیریت کارکنان
     /// </summary>
     [ApiController]
-    [Route("api/v1/{dataType}/[controller]/[action]")]
     public class PersonnelInfoController : ControllerBase
     {
         private readonly IPersonnelInfoServices _personnalServices;
@@ -36,14 +35,14 @@ namespace WebApi.Controllers
         ///     dataType : "csv"
         ///     POST /Add
         ///     {
-    ///"data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,2023-02-03 \r\n  Tanmay,Patil,1234567890,111,111,232424,2023-02-03",
-   ///"calculatorName": "CalcurlatorA"
-///}
+        ///         "data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,2023-02-03 \r\n  Tanmay,Patil,1234567890,111,111,232424,2023-02-03",
+        ///         "calculatorName": "CalcurlatorA"
+        ///     }
     ///
     /// </remarks>
 
-    [HttpPost]
-        public async Task<IActionResult> Add(ProcessDataAndOverTimeCalculator dto)
+    [HttpPost("api/v1/{dataType}/[controller]/[action]")]
+        public async Task<IActionResult> Add([FromBody]ProcessDataAndOverTimeCalculator dto)
         {
             List<PersonnelInfo> personnelInfos = _personnalServices.GetPersonnelInfoFromData(
                 RouteData.Values["datatype"].ToString(),
@@ -53,13 +52,26 @@ namespace WebApi.Controllers
             return Ok();
         }
 
+
+
         /// <summary>
         /// بروزرسانی پروفایل
         /// </summary>
         /// <param name="dto">مقدار</param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Update(ProcessDataAndOverTimeCalculator dto)
+        /// /// <remarks>
+        /// Sample request:
+        ///
+        ///     dataType : "csv"
+        ///     POST /Add
+        //{
+        //    "data": "id,FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n 3,hamidreza,Patil,1234567890,111,111,232424,14000101",
+        //    "calculatorName": "CalcurlatorA"
+        //}
+        ///
+        /// </remarks>
+        [HttpPost("api/v1/{dataType}/[controller]/[action]")]
+        public async Task<IActionResult> Update([FromBody] ProcessDataAndOverTimeCalculator dto)
         {
             List<PersonnelInfo> personnelInfos = _personnalServices.GetPersonnelInfoFromData(
                 RouteData.Values["datatype"].ToString(),
@@ -73,8 +85,8 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="dto">مقدار</param>
         /// <returns></returns>
-        [HttpDelete]
-        public async Task<IActionResult> Delete(DeleteReqDto dto)
+        [HttpDelete("api/v1/[controller]/[action]/{Id}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteReqDto dto)
         {
             return Ok(await _personnalServices.DeleteAsync(dto.Id, Request.HttpContext.RequestAborted));
         }
@@ -84,16 +96,25 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="dto">مقدار</param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetRange(GetRangeDto dto)
+        [HttpGet("api/v1/[controller]/[action]")]
+        public async Task<IActionResult> GetRange([FromQuery]GetRangeDto dto)
         {
             DateTime from = dto.From.ToSystemDate();
             DateTime to = dto.To.ToSystemDate();
 
-            return Ok(await _personnalServices.GetAllWithFilterAsync
-                (dto.PageSize, dto.PageNumber, dto.AscSort, dto.SrtField,
-                (x => x.SalaryDate >= from && x.SalaryDate <= to),
-                Request.HttpContext.RequestAborted));
+            return Ok(await _personnalServices.GetAllAsyncWithDapper(
+                dto.PageSize,
+                dto.PageNumber,
+                dto.AscSort,
+                dto.SrtField,
+                from,to,
+                HttpContext.RequestAborted
+                ));
+
+            //return Ok(await _personnalServices.GetAllWithFilterAsync
+            //    (dto.PageSize, dto.PageNumber, dto.AscSort, dto.SrtField,
+            //    (x => x.SalaryDate >= from && x.SalaryDate <= to),
+            //    Request.HttpContext.RequestAborted));
         }
 
         /// <summary>
@@ -101,8 +122,8 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="dto">مقدار</param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("api/v1/[controller]/[action]/{id}")]
+        public async Task<IActionResult> Get([FromRoute]int id)
         {
             return Ok(await _personnalServices.GetOneAsync(id,Request.HttpContext.RequestAborted));
         }

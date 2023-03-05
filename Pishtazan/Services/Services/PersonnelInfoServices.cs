@@ -43,10 +43,11 @@ namespace Services.Services
 
         public override async Task<PersonnelInfo> GetOneAsync(int id, CancellationToken cancellationToken)
         {
-            var query = $"SELECT TOP(1) * FROM  PersonnelInfo WHERE ID = {id}";
+            var query = $"SELECT TOP(1) * FROM  PersonelInfo WHERE ID = {id}";
 
-            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"))) 
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
+                conn.Open();
                 var result = await conn.QueryAsync<PersonnelInfo>(query);
 
                 return result.FirstOrDefault();
@@ -54,10 +55,11 @@ namespace Services.Services
         }
         public async Task<List<PersonnelInfo>> GetAllAsyncWithDapper(int pageSize, int pageNumber, bool ascSorted, string orderField, DateTime? fromDate, DateTime? toDate, CancellationToken cancellationToken = default)
         {
-            var orderType = ascSorted ? "" : "DESC";
-            var orderColumn = orderField == null ? "ID" : orderField;
 
-            var query = new StringBuilder($"SELECT * FROM  PersonnelInfo ");
+            var orderColumn = orderField == null ? "ID" : orderField;
+            var orderType = ascSorted ? "" : "DESC";
+
+            var query = new StringBuilder($"SELECT * FROM  PersonelInfo ");
 
             bool hasFilterBefor = false;
 
@@ -78,22 +80,33 @@ namespace Services.Services
                     query.Append(" SalaryDate <= @toDate");
             }
 
-            query.Append(" ORDER By @orderColumn @orderType");
-            query.Append($" OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY");
 
-            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"))) 
+            query.Append($" ORDER By {orderColumn} ");
+
+            query.Append($" {orderType} ");
+
+            query.Append(" OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY ");
+
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var result = await conn.QueryAsync<PersonnelInfo>(query.ToString(), new
+                try
                 {
-                    fromDate = fromDate,
-                    toDate = toDate,
-                    orderColumn = orderColumn,
-                    orderType = orderType,
-                    skip = (pageNumber - 1) * pageSize,
-                    take = pageSize
-                });
+                    var result = await conn.QueryAsync<PersonnelInfo>(query.ToString(), new
+                    {
+                        fromDate = fromDate,
+                        toDate = toDate,
+                        skip = (pageNumber - 1) * pageSize,
+                        take = pageSize
+                    });
 
-                return result.ToList();
+                    return result.ToList();
+                }
+                catch (Exception ex)
+                {
+
+                    return null;
+                }
+
             }
 
         }

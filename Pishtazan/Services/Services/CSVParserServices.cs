@@ -3,6 +3,7 @@ using Domain.Services;
 using Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,10 +43,10 @@ namespace Services.Services
                     var propInfo = model.GetType().GetProperties().FirstOrDefault(x => x.Name.Trim().ToLower() == headers[i].Trim().ToLower());
                     if (propInfo == null)
                         throw new Exception("Properties Not Defined : " + header[i]);
-                    if (propInfo.PropertyType == typeof(int))
-                        propInfo.SetValue(model, Convert.ToInt32(values[i]));
+                    if (propInfo.PropertyType == typeof(long))
+                        propInfo.SetValue(model, Convert.ToInt64(values[i]));
                     if (propInfo.PropertyType == typeof(DateTime))
-                        propInfo.SetValue(model, Convert.ToDateTime(values[i]));
+                        propInfo.SetValue(model, Convert.ToDateTime(values[i].ToSystemDate()));
                     if (propInfo.PropertyType == typeof(string))
                         propInfo.SetValue(model, values[i]);
                 }
