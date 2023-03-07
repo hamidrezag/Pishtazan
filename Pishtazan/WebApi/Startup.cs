@@ -101,6 +101,16 @@ namespace WebApi
                 endpoints.MapControllers();
             });
 
+            InitializeDatabase(app);
+
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
+            }
         }
     }
 }
