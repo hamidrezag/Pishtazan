@@ -8,6 +8,6 @@ namespace Domain.Services
 {
     public interface IOvertimePoliciesServices
     {
-        public int Calculate(string name, int salary);
+        public int Calculate(string name, int salary);  
     }
 }

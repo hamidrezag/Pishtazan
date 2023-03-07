@@ -35,7 +35,7 @@ namespace WebApi.Controllers
         ///     dataType : "csv"
         ///     POST /Add
         ///     {
-        ///         "data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,14000101 \r\n  Tanmay,Patil,1234567890,111,111,232424,2023-02-03",
+        ///         "data": "FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n Tanmay,Patil,1234567890,111,111,232424,14000101 \r\n  Tanmay,Patil,1234567890,111,111,232424,14000202",
         ///         "calculatorName": "CalcurlatorA"
         ///     }
     ///
@@ -64,10 +64,10 @@ namespace WebApi.Controllers
         ///
         ///     dataType : "csv"
         ///     POST /Add
-        //{
-        //    "data": "id,FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n 3,hamidreza,Patil,1234567890,111,111,232424,14000101",
-        //    "calculatorName": "CalcurlatorA"
-        //}
+        ///     {
+        ///         "data": "Id,FirstName,LastName,BasicSalary,Allowance,Transportation,TotalSallary,SalaryDate \r\n 1,Tanmay,Patil,1234567890,111,111,232424,14000101 \r\n  2,Tanmay,Patil,1234567890,111,111,232424,14000202",
+        ///         "calculatorName": "CalcurlatorA"
+        ///     }
         ///
         /// </remarks>
         [HttpPost("api/v1/{dataType}/[controller]/[action]")]
